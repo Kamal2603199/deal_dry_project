@@ -1,4 +1,5 @@
 import 'package:cs_tech/home_screen.dart';
+import 'package:cs_tech/model/device_info.dart';
 import 'package:cs_tech/otp_screen.dart';
 import 'package:cs_tech/register_page.dart';
 import 'package:cs_tech/splash_screen.dart';
@@ -21,13 +22,12 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-    routes: {
-    "/": (context) => SplashScreen(),
-      "/profilePage": (context) => RegisterPage(),
-    "/otpVerification": (context) => OtpScreen(),
-      "/HomeScreen": (context) => HomeScreen(),
-    },
+      routes: {
+        "/": (context) => SplashScreen(),
+        "/profilePage": (context) => RegisterPage(),
+        "/otpVerification": (context) => OtpScreen(),
+        "/HomeScreen": (context) => Home(),
+      },
     );
   }
 }
-

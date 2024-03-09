@@ -3,5 +3,5 @@ class DeviceInfo {
   final String deviceId;
   final String userId;
 
-  DeviceInfo(String userId, {required this.mobileNumber, required this.userId, required this.deviceId});
+  DeviceInfo({required this.mobileNumber, required this.userId, required this.deviceId});
 }

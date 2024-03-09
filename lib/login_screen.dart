@@ -4,7 +4,9 @@ import 'dart:convert';
 import 'model/device_info.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key, required data});
+  var data;
+
+  LoginPage({super.key, required this.data}) : super();
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -28,7 +30,12 @@ class _LoginPageState extends State<LoginPage> {
         child: Form(
           key: _formKey,
           child: Column(
-            children: [
+            children: [ Image.asset(
+              "assets/images/deals_dry.png", // Change this to your image path
+              width: 450, // Adjust the width as needed
+              height: 330, // Adjust the height as needed
+            ),
+              SizedBox(height: 16.0),
               TextFormField(
                 controller: _mobileController,
                 decoration: InputDecoration(
@@ -44,6 +51,9 @@ class _LoginPageState extends State<LoginPage> {
               ),
               SizedBox(height: 16.0),
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.redAccent, // Change the background color here
+                ),
                 child: Text('Login'),
                 onPressed: () {
                   // validate the form
@@ -65,7 +75,7 @@ class _LoginPageState extends State<LoginPage> {
     // the data to send
     var data = {
       "mobileNumber": _mobileController.text,
-      "deviceId": "65e9684a01c8e299aad2633f",
+      "deviceId": widget.data.deviceId,
     };
     print(data);
     var response = await http.post(
@@ -76,23 +86,24 @@ class _LoginPageState extends State<LoginPage> {
         // Add any required headers here
       },
     );
+
+
     if (response.statusCode == 200) {
       final Map<String, dynamic> jsonResponse = json.decode(response.body);
       ApiResponse apiResponse = ApiResponse.fromJson(jsonResponse);
-      //StatusResponse otpResponse = StatusResponse.fromJson(response['data']);
-      // Parse response body using the SplashScreen model
-      //SplashScreenModel splashScreenModel = SplashScreenModel.fromJson(jsonDecode(response.body));
-      // Data fetched successfully, navigate to next screen
-     // Navigator.of(context).pushReplacement(
-       // MaterialPageRoute(builder: (context) => LoginPage(data: splashScreenModel.data)),
+
+      // Navigator.of(context).pushReplacement(
+      // MaterialPageRoute(builder: (context) => LoginPage(data: splashScreenModel.data)),
       // );
       Navigator.pushNamed(
         context,
         "/otpVerification",
-        arguments: DeviceInfo(apiResponse.data.userId, apiResponse.data.deviceId ),
+        arguments: DeviceInfo(
+            mobileNumber: _mobileController.text,
+            userId: apiResponse.data.userId,
+            deviceId: apiResponse.data.deviceId),
       );
       print(apiResponse.status);
-      print(apiResponse.data.userId);
     } else {
       // Error occurred, handle appropriately
       print('Failed to fetch data: ${response.statusCode}');
@@ -103,19 +114,6 @@ class _LoginPageState extends State<LoginPage> {
     // TODO: handle the response according to your logic
   }
 }
-
-class LoginScreenModel {
-  final Data data;
-
-  LoginScreenModel({required this.data});
-
-  factory LoginScreenModel.fromJson(Map<String, dynamic> json) {
-    return LoginScreenModel(
-      data: Data.fromJson(json['data']),
-    );
-  }
-}
-
 
 
 class ApiResponse {

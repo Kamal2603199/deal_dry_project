@@ -1,3 +1,4 @@
+import 'package:cs_tech/model/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -5,7 +6,7 @@ import 'dart:convert';
 import 'home_screen.dart';
 
 class OtpScreen extends StatefulWidget {
-  const OtpScreen({Key? key}) : super(key: key);
+  const OtpScreen({super.key}) : super();
 
   @override
   _OtpScreenState createState() => _OtpScreenState();
@@ -19,6 +20,8 @@ class _OtpScreenState extends State<OtpScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final DeviceInfo deviceInfo = ModalRoute.of(context)?.settings.arguments as DeviceInfo ?? DeviceInfo(mobileNumber: "", userId: "", deviceId: "");
+
     return Scaffold(
       appBar: AppBar(
         title: Text('OTP Screen'),
@@ -28,7 +31,11 @@ class _OtpScreenState extends State<OtpScreen> {
         child: Form(
           key: _formKey,
           child: Column(
-            children: [
+            children: [ Image.asset(
+              "assets/images/otp_verification.png", // Change this to your image path
+              width: 550, // Adjust the width as needed
+              height: 345, // Adjust the height as needed
+            ),
               TextFormField(
                 controller: _otpController,
                 decoration: InputDecoration(
@@ -44,12 +51,15 @@ class _OtpScreenState extends State<OtpScreen> {
               ),
               SizedBox(height: 16.0),
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.redAccent, // Change the background color here
+                ),
                 child: Text('Verify'),
                 onPressed: () {
                   // validate the form
                   if (_formKey.currentState!.validate()) {
                     // call the verify function
-                    verify(_otpController.text);
+                    verify(_otpController.text, deviceInfo);
                   }
                 },
               ),
@@ -59,15 +69,14 @@ class _OtpScreenState extends State<OtpScreen> {
       ),
     );
   }
-  void verify(String otp) async {
-    print(otp);
+  void verify(String otp, DeviceInfo deviceInfo) async {
     var response = await http.post(
       Uri.parse('http://devapiv3.dealsdray.com/api/v2/user/otp/verification'),
       body: jsonEncode(
           {
             "otp":otp,
-            "deviceId": "65e9684a01c8e299aad2633f",
-            "userId": "65e9686601c8e299aad26343"
+            "deviceId": deviceInfo.deviceId,
+            "userId": deviceInfo.userId
           }),
       headers: {
         'Content-Type': 'application/json',
@@ -78,14 +87,22 @@ class _OtpScreenState extends State<OtpScreen> {
     ApiResponse apiResponse = ApiResponse.fromJson(jsonResponse);
     if(apiResponse.status == 1) {
       print("------otp is verified-----");
+      print(deviceInfo.userId);
+      print(deviceInfo.deviceId);
+      print(deviceInfo.mobileNumber);
       // otp verified
       if(apiResponse.data.registrationStatus == "Incomplete") {
-        Navigator.pushNamed(context, "/profilePage");
+        Navigator.pushNamed(context, "/profilePage", arguments:
+        DeviceInfo(
+            mobileNumber: deviceInfo.mobileNumber,
+            userId: deviceInfo.userId,
+            deviceId: deviceInfo.deviceId)
+        );
       } else {
         Navigator.pushAndRemoveUntil(context,
           MaterialPageRoute(
             builder: (context) =>
-            const HomeScreen(),
+            Home(),
             //       ChangeNotifierProvider(
             //   create: (context) => CartModel(),
             //   child: const DashBoardPage(),

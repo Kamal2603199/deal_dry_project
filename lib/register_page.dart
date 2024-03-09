@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:cs_tech/home_screen.dart';
+import 'package:cs_tech/model/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -11,37 +13,42 @@ class _MyPageState extends State<RegisterPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _referralCodeController = TextEditingController();
+  late DeviceInfo deviceInfo;
 
   Future<void> _submitData() async {
     print("success");
-    final String name = _nameController.text;
-    final String email = _emailController.text;
-    final String referralCode = _referralCodeController.text;
-
-    // Replace 'your_api_endpoint' with your actual API endpoint
-    final Uri apiUrl = Uri.parse('http://devapiv3.dealsdray.com/api/v2/user/email/referral');
 
     try {
-      final response = await http.post(
-        apiUrl,
-        body: {
+      final String name = _nameController.text;
+      final String email = _emailController.text;
+      final String referralCode = _referralCodeController.text;
+
+      // Replace 'your_api_endpoint' with your actual API endpoint
+      final Uri apiUrl = Uri.parse('http://devapiv3.dealsdray.com/api/v2/user/email/referral');
+
+      var response = await http.post(
+        Uri.parse('http://devapiv3.dealsdray.com/api/v2/user/otp/verification'),
+        body: jsonEncode({
           'name': name,
           'email': email,
           'referral_code': referralCode,
-          "userId": "65e9686601c8e299aad26343"
+          "userId": deviceInfo.userId
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          // Add any required headers here
         },
       );
+
       print(response.statusCode);
       if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonResponse = json.decode(response.body);
+        ApiResponse apiResponse = ApiResponse.fromJson(jsonResponse);
+
         Navigator.pushAndRemoveUntil(context,
           MaterialPageRoute(
             builder: (context) =>
-            const HomeScreen(),
-            //       ChangeNotifierProvider(
-            //   create: (context) => CartModel(),
-            //   child: const DashBoardPage(),
-            // ),
-            //
+                Home(),
           ),
               (route) => false,
         );
@@ -59,6 +66,8 @@ class _MyPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    deviceInfo = ModalRoute.of(context)?.settings.arguments as DeviceInfo ?? DeviceInfo(mobileNumber: "", userId: "", deviceId: "");
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Register Page'),
@@ -67,7 +76,11 @@ class _MyPageState extends State<RegisterPage> {
         padding: EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
+          children: [ Image.asset(
+            "assets/images/register_image.png", // Change this to your image path
+            width: 200, // Adjust the width as needed
+            height: 150, // Adjust the height as needed
+          ),
             TextField(
               controller: _nameController,
               decoration: InputDecoration(labelText: 'Name'),
@@ -80,16 +93,51 @@ class _MyPageState extends State<RegisterPage> {
             SizedBox(height: 10),
             TextField(
               controller: _referralCodeController,
-              decoration: InputDecoration(labelText: 'Referral Code'),
+              decoration: InputDecoration(labelText: 'Referral Code (Optional)'),
             ),
             SizedBox(height: 20),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: Colors.redAccent, // Change the background color here
+              ),
               onPressed: _submitData,
               child: Text('Submit'),
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+
+class ApiResponse {
+  final int status;
+  final ApiData data;
+
+  ApiResponse({required this.status, required this.data});
+
+  factory ApiResponse.fromJson(Map<String, dynamic> json) {
+    return ApiResponse(
+      status: json['status'],
+      data: ApiData.fromJson(json['data']),
+    );
+  }
+}
+
+class ApiData {
+  final String? message;
+  // final String? registrationStatus;
+
+  ApiData({required this.message,
+    // required this.registrationStatus
+
+  });
+
+  factory ApiData.fromJson(Map<String, dynamic> json) {
+    return ApiData(
+      message: json['message'],
+      // registrationStatus: json['registration_status'],
     );
   }
 }

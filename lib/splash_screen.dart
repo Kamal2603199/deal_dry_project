@@ -20,6 +20,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> fetchData() async {
+    print("fetch data");
     try {
       var data = {
         "deviceType": "andriod",
@@ -47,12 +48,17 @@ class _SplashScreenState extends State<SplashScreen> {
         },
       );
 
+
       if (response.statusCode == 200) {
         // Parse response body using the SplashScreen model
-        SplashScreenModel splashScreenModel = SplashScreenModel.fromJson(jsonDecode(response.body));
-        // Data fetched successfully, navigate to next screen
+
+        final Map<String, dynamic> jsonResponse = json.decode(response.body);
+        ApiResponse apiResponse = ApiResponse.fromJson(jsonResponse);
+
+        await Future.delayed(Duration(seconds: 3));
+
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => LoginPage(data: splashScreenModel.data)),
+          MaterialPageRoute(builder: (context) => LoginPage(data: apiResponse.data)),
         );
       } else {
         // Error occurred, handle appropriately
@@ -73,21 +79,46 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: _isLoading ? CircularProgressIndicator() : Container(),
+        child: _isLoading ? CircularProgressIndicator() :  Stack(
+          children: [
+            Image.asset(
+              "assets/images/splash_image.png", // Your image path here
+              fit: BoxFit.cover,
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+            ),
+            // You can add any widgets over the image if needed
+          ],
+        ),
       ),
     );
   }
 }
 
- class SplashScreenModel {
-  final Data data;
+class ApiResponse {
+  final int status;
+  final ApiData data;
 
-  SplashScreenModel({required this.data});
+  ApiResponse({required this.status, required this.data});
 
-  factory SplashScreenModel.fromJson(Map<String, dynamic> json) {
-    return SplashScreenModel(
-      data: Data.fromJson(json['data']),
+  factory ApiResponse.fromJson(Map<String, dynamic> json) {
+    return ApiResponse(
+      status: json['status'],
+      data: ApiData.fromJson(json['data']),
     );
   }
 }
 
+class ApiData {
+  final String message;
+  final String deviceId;
+
+  ApiData({required this.message, required this.deviceId});
+
+  factory ApiData.fromJson(Map<String, dynamic> json) {
+    return ApiData(
+      message: json['message'],
+      deviceId: json['deviceId'],
+    );
+  }
+}
