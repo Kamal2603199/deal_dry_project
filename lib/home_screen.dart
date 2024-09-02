@@ -54,7 +54,7 @@ class _HomeState extends State<Home> {
 
   Future<void> fetchImages() async {
     final response = await http.get(
-      Uri.parse('http://devapiv3.dealsdray.com/api/v2/user/home/withoutPrice'),
+      Uri.parse('http://devapiv4.dealsdray.com/api/v2/user/home/withoutPrice'),
       headers: {
         'Content-Type': 'application/json',
       },
@@ -104,7 +104,7 @@ class _HomeState extends State<Home> {
                   Padding(
                     padding: const EdgeInsets.all(15.0),
                     child: Image.network(
-                      'http://devapiv3.dealsdray.com/icons/banner.png',
+                      'http://devapiv4.dealsdray.com/icons/banner.png',
                       height: 180,
                       width: 280,
                     ),
@@ -113,7 +113,7 @@ class _HomeState extends State<Home> {
                   Padding(
                     padding: const EdgeInsets.all(6.0),
                     child: Image.network(
-                      'http://devapiv3.dealsdray.com/icons/discount_banner.png',
+                      'http://devapiv4.dealsdray.com/icons/discount_banner.png',
                       height: 180,
                       width: 280,
                     ),
@@ -122,7 +122,7 @@ class _HomeState extends State<Home> {
                   Padding(
                     padding: const EdgeInsets.all(6.0),
                     child: Image.network(
-                      'http://devapiv3.dealsdray.com/icons/Image -97.png',
+                      'http://devapiv4.dealsdray.com/icons/Image -97.png',
                       height: 180,
                       width: 280,
                     ),
@@ -139,7 +139,7 @@ class _HomeState extends State<Home> {
                   Padding(
                     padding: const EdgeInsets.all(5.0),
                     child: Image.network(
-                      'http://devapiv3.dealsdray.com/icons/cat_mobile.png',
+                      'http://devapiv4.dealsdray.com/icons/cat_mobile.png',
                       height: 100,
                       width: 80,
                     ),
@@ -148,7 +148,7 @@ class _HomeState extends State<Home> {
                   Padding(
                     padding: const EdgeInsets.all(5.0),
                     child: Image.network(
-                      'http://devapiv3.dealsdray.com/icons/cat_lap.png',
+                      'http://devapiv4.dealsdray.com/icons/cat_lap.png',
                       height: 100,
                       width: 80,
                     ),
@@ -157,7 +157,7 @@ class _HomeState extends State<Home> {
                   Padding(
                     padding: const EdgeInsets.all(5.0),
                     child: Image.network(
-                      'http://devapiv3.dealsdray.com/icons/cat_camera.png',
+                      'http://devapiv4.dealsdray.com/icons/cat_camera.png',
                       height: 100,
                       width: 80,
                     ),
@@ -166,7 +166,7 @@ class _HomeState extends State<Home> {
                   Padding(
                     padding: const EdgeInsets.all(5.0),
                     child: Image.network(
-                      'http://devapiv3.dealsdray.com/icons/cat_led.png',
+                      'http://devapiv4.dealsdray.com/icons/cat_led.png',
                       height: 100,
                       width: 80,
                     ),

@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'home_screen.dart';
+import 'register_page.dart'; // Import your RegisterPage
 
 class OtpScreen extends StatefulWidget {
   const OtpScreen({super.key}) : super();
@@ -31,11 +32,12 @@ class _OtpScreenState extends State<OtpScreen> {
         child: Form(
           key: _formKey,
           child: Column(
-            children: [ Image.asset(
-              "assets/images/otp_verification.png", // Change this to your image path
-              width: 550, // Adjust the width as needed
-              height: 345, // Adjust the height as needed
-            ),
+            children: [
+              Image.asset(
+                "assets/images/otp_verification.png", // Change this to your image path
+                width: 550, // Adjust the width as needed
+                height: 345, // Adjust the height as needed
+              ),
               TextFormField(
                 controller: _otpController,
                 decoration: InputDecoration(
@@ -52,15 +54,18 @@ class _OtpScreenState extends State<OtpScreen> {
               SizedBox(height: 16.0),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.redAccent, // Change the background color here
+                  backgroundColor: Colors.redAccent, // Change the background color here
                 ),
                 child: Text('Verify'),
                 onPressed: () {
-                  // validate the form
-                  if (_formKey.currentState!.validate()) {
-                    // call the verify function
-                    verify(_otpController.text, deviceInfo);
-                  }
+                  // Directly navigate to the RegisterPage without verifying the OTP
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => RegisterPage(), // Navigate to RegisterPage
+                      settings: RouteSettings(arguments: deviceInfo),
+                    ),
+                  );
                 },
               ),
             ],
@@ -68,62 +73,6 @@ class _OtpScreenState extends State<OtpScreen> {
         ),
       ),
     );
-  }
-  void verify(String otp, DeviceInfo deviceInfo) async {
-    var response = await http.post(
-      Uri.parse('http://devapiv3.dealsdray.com/api/v2/user/otp/verification'),
-      body: jsonEncode(
-          {
-            "otp":otp,
-            "deviceId": deviceInfo.deviceId,
-            "userId": deviceInfo.userId
-          }),
-      headers: {
-        'Content-Type': 'application/json',
-        // Add any required headers here
-      },
-    );
-    final Map<String, dynamic> jsonResponse = json.decode(response.body);
-    ApiResponse apiResponse = ApiResponse.fromJson(jsonResponse);
-    if(apiResponse.status == 1) {
-      print("------otp is verified-----");
-      print(deviceInfo.userId);
-      print(deviceInfo.deviceId);
-      print(deviceInfo.mobileNumber);
-      // otp verified
-      if(apiResponse.data.registrationStatus == "Incomplete") {
-        Navigator.pushNamed(context, "/profilePage", arguments:
-        DeviceInfo(
-            mobileNumber: deviceInfo.mobileNumber,
-            userId: deviceInfo.userId,
-            deviceId: deviceInfo.deviceId)
-        );
-      } else {
-        Navigator.pushAndRemoveUntil(context,
-          MaterialPageRoute(
-            builder: (context) =>
-            Home(),
-            //       ChangeNotifierProvider(
-            //   create: (context) => CartModel(),
-            //   child: const DashBoardPage(),
-            // ),
-            //
-          ),
-              (route) => false,
-        );
-      }
-    } else if(apiResponse.status == 3) {
-      print("------otp is not verified-----");
-
-      // invalid OTP
-
-    } else {
-      print("-----------unhandled Otp status code ---------");
-    }
-    // print the response status code and body
-    print(response.statusCode);
-    print(response.body);
-    // TODO: handle the response according to your logic
   }
 }
 

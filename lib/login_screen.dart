@@ -52,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(height: 16.0),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.redAccent, // Change the background color here
+                  backgroundColor: Colors.redAccent, // Change the background color here
                 ),
                 child: Text('Login'),
                 onPressed: () {
@@ -71,7 +71,7 @@ class _LoginPageState extends State<LoginPage> {
   }
   void login() async {
     // the API url
-    var url = Uri.parse('http://devapiv3.dealsdray.com/api/v2/user/otp');
+    var url = Uri.parse('http://devapiv4.dealsdray.com/api/v2/user/otp');
     // the data to send
     var data = {
       "mobileNumber": _mobileController.text,
@@ -79,7 +79,7 @@ class _LoginPageState extends State<LoginPage> {
     };
     print(data);
     var response = await http.post(
-      Uri.parse('http://devapiv3.dealsdray.com/api/v2/user/otp'),
+      Uri.parse('http://devapiv4.dealsdray.com/api/v2/user/otp'),
       body: jsonEncode(data),
       headers: {
         'Content-Type': 'application/json',

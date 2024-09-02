@@ -24,10 +24,10 @@ class _MyPageState extends State<RegisterPage> {
       final String referralCode = _referralCodeController.text;
 
       // Replace 'your_api_endpoint' with your actual API endpoint
-      final Uri apiUrl = Uri.parse('http://devapiv3.dealsdray.com/api/v2/user/email/referral');
+      final Uri apiUrl = Uri.parse('http://devapiv4.dealsdray.com/api/v2/user/email/referral');
 
       var response = await http.post(
-        Uri.parse('http://devapiv3.dealsdray.com/api/v2/user/otp/verification'),
+        Uri.parse('http://devapiv4.dealsdray.com/api/v2/user/otp/verification'),
         body: jsonEncode({
           'name': name,
           'email': email,
@@ -98,7 +98,7 @@ class _MyPageState extends State<RegisterPage> {
             SizedBox(height: 20),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                primary: Colors.redAccent, // Change the background color here
+                backgroundColor: Colors.redAccent, // Change the background color here
               ),
               onPressed: _submitData,
               child: Text('Submit'),

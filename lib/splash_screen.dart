@@ -40,7 +40,7 @@ class _SplashScreenState extends State<SplashScreen> {
         }
       };
       var response = await http.post(
-        Uri.parse('http://devapiv3.dealsdray.com/api/v2/user/device/add'),
+        Uri.parse('http://devapiv4.dealsdray.com/api/v2/user/device/add'),
         body: jsonEncode(data),
         headers: {
           'Content-Type': 'application/json',
